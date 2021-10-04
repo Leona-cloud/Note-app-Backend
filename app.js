@@ -2,7 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 //const dotenv = require('dotenv');
 const config = require('config');
-const notes = require('./Routes/note')
+const notes = require('./Routes/note');
+const user = require('./Routes/User');
+const login = require('./Routes/login');
 
 const app = express();
 
@@ -10,8 +12,14 @@ app.use(express.json());
 
 app.use(express.urlencoded({extended: true}));
 app.use('/api/notes', notes);
+app.use('/api/auth', login);
+app.use('/api/auth', user);
 
-//dotenv.config();
+if(!config.get('jwtPrivateKey')){
+    console.error('FATAL ERROR: jwtPrivateKey is not defined');
+    process.exit(1);
+}
+
 const db = config.get('db')
 mongoose.connect(db, 
     {useNewUrlParser: true, 
