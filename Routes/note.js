@@ -1,10 +1,11 @@
 const express = require("express");
+const auth = require('../middleware/auth');
 const validateObjectId = require('../middleware/validateObjectId');
 const _ = require("lodash");
 const mongoose = require("mongoose");
 const router = express.Router();
-const { Note } = require("../Model/notes");
-const { request } = require("express");
+const { Note, validation } = require("../Model/notes");
+
 
 router.get("/:id", validateObjectId, async (req, res) => {
    const note = await Note.findById({ _id: req.params.id });
@@ -18,7 +19,10 @@ router.get("/:id", validateObjectId, async (req, res) => {
     
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
+  const { error } = validation(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
   const note = new Note(_.pick(req.body, ["title", "body", "date", "author"]));
   if(req.body.body == ' ') return res.status(403).send("Note can't have an empty body");
   try {
@@ -26,6 +30,7 @@ router.post("/", async (req, res) => {
     res.send(result);
     console.log(result);
   } catch (ex) {
+    res.send('Please fill the required fields')
     console.log(ex.message);
   }
 });
