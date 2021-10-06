@@ -4,7 +4,18 @@ const validateObjectId = require('../middleware/validateObjectId');
 const _ = require("lodash");
 const mongoose = require("mongoose");
 const router = express.Router();
-const { Note, validation } = require("../Model/notes");
+const { Note, validateNote } = require("../Model/notes");
+
+
+router.get('/', async (req, res)=>{
+  try {
+    const notes = await Note.find().sort('name');
+    res.send(notes)
+  } catch (ex) {
+      console.log(ex)
+  }
+ 
+})
 
 
 router.get("/:id", validateObjectId, async (req, res) => {
@@ -20,7 +31,7 @@ router.get("/:id", validateObjectId, async (req, res) => {
 });
 
 router.post("/", auth, async (req, res) => {
-  const { error } = validation(req.body);
+  const { error } = validateNote(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   const note = new Note(_.pick(req.body, ["title", "body", "date", "author"]));
@@ -35,7 +46,7 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   const note = await Note.findByIdAndUpdate(
     req.params.id,
     { title: req.body.title, body: req.body.body },
