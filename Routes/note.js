@@ -1,4 +1,5 @@
 const express = require("express");
+
 const auth = require('../middleware/auth');
 const error = require('../middleware/error');
 const validateObjectId = require('../middleware/validateObjectId');
@@ -8,28 +9,22 @@ const router = express.Router();
 const { Note, validateNote } = require("../Model/notes");
 
 
-router.get('/', async (req, res, next)=>{
-  try {
 
+router.get('/', async (req, res)=>{
+    
     const notes = await Note.find().sort('name');
     res.send(notes)
-  } catch (ex) {
-     next(ex);
-  }
  
-})
+});
 
 
-router.get("/:id", validateObjectId, async (req, res) => {
+router.get("/:id", [auth, validateObjectId], async (req, res) => {
    const note = await Note.findById({ _id: req.params.id });
-  try {
+ 
     if (!note) return res.status(404).send("Note with the given ID was not found");
       res.status(200).send(note);
   
-  } catch (ex) {
-    console.log(ex)
-  }
-    
+
 });
 
 router.post("/", auth, async (req, res) => {
@@ -39,17 +34,17 @@ router.post("/", auth, async (req, res) => {
   const note = new Note(_.pick(req.body, ["title", "body", "date", "author"]));
   let Body = req.body.body;
   if(Body.length == 0) return res.status(400).send("Note can't have an empty body");
-  try {
+  
     const result = await note.save();
     res.send(result);
     console.log(result);
-  } catch (ex) {
+
     res.send('Please fill the required fields')
     console.log(ex.message);
-  }
+  
 });
 
-router.put("/:id", [auth, validateObjectId], async (req, res) => {
+router.put("/:id", [auth, validateObjectId],async (req, res) => {
   const note = await Note.findByIdAndUpdate(
     req.params.id,
     { title: req.body.title, body: req.body.body },
