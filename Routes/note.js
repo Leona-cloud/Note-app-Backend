@@ -10,7 +10,7 @@ const { Note, validateNote } = require("../Model/notes");
 
 
 
-router.get('/', async (req, res)=>{
+router.get('/', auth, async (req, res)=>{
     
     const notes = await Note.find().sort('name');
     res.send(notes)
