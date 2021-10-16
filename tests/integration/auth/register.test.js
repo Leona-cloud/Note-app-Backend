@@ -26,7 +26,7 @@ describe(`${route}`, () =>{
         return await request(server)
         .post(`${route}/register`)
         .send(user)
-    }
+    };
 
     describe('Register', () => {
         it('should return 200 if user details are valid', async ()=> {
@@ -50,5 +50,5 @@ describe(`${route}`, () =>{
             const res = await exec();
             expect(res.status).toBe(400);
         });
-    })
-})
+    });
+});
