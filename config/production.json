@@ -1,4 +1,0 @@
-{
-    "db": "mongodb://localhost/notes_test",
-    "jwtPrivateKey": "1234"
-}
