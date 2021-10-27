@@ -1,6 +1,6 @@
 {
     "jwtPrivateKey": "",
-    "db": ""
+    "db": "mongodb://localhost/notes_test"
    
     
 }
