@@ -1,5 +1,5 @@
 const express = require("express");
-
+const author = require('../middleware/author')
 const auth = require('../middleware/auth');
 const error = require('../middleware/error');
 const validateObjectId = require('../middleware/validateObjectId');
@@ -27,7 +27,7 @@ router.get("/:id", [auth, validateObjectId], async (req, res) => {
 
 });
 
-router.post("/", auth, async (req, res) => {
+router.post("/", [auth, author], async (req, res) => {
   const { error } = validateNote(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -44,7 +44,7 @@ router.post("/", auth, async (req, res) => {
   
 });
 
-router.put("/:id", [auth, validateObjectId],async (req, res) => {
+router.put("/:id", [auth, validateObjectId, author],async (req, res) => {
   const note = await Note.findByIdAndUpdate(
     req.params.id,
     { title: req.body.title, body: req.body.body },
@@ -57,7 +57,7 @@ router.put("/:id", [auth, validateObjectId],async (req, res) => {
   }
 });
 
-router.delete("/:id", [auth, validateObjectId], async (req, res) => {
+router.delete("/:id", [auth, validateObjectId, author], async (req, res) => {
   let note = await Note.findByIdAndRemove(req.params.id);
   if (!note) {
     return res.status(404).send("note with the given id does not exist");
@@ -67,3 +67,4 @@ router.delete("/:id", [auth, validateObjectId], async (req, res) => {
 });
 
 module.exports = router;
+
