@@ -1,5 +1,6 @@
 function author(req, res, next){
-    if(!req.user.isAuthor) return res.status(403).json({success: false, message: 'Unauthorized user'})
+    console.log(req.user.isAuthor)
+    if(req.user.isAuthor !== true) return res.status(403).json({success: false, message: 'Unauthorized user'})
 
     next();
 }

@@ -8,7 +8,7 @@ module.exports = function(){
         new winston.transports.File({filename: 'uncaughtExceptions.log'}));
     
     process.on('unhandledRejection', (ex)=>{
-       throw ex;
+       throw ex.message
     });
     
     winston.add(new winston.transports.File({filename: 'logfile.log'}));

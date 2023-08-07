@@ -14,15 +14,11 @@ const noteSchema = new mongoose.Schema({
         type : String,
         required: true
     },
-    date: {
-        type: Date,
-        default: Date.now
-    },
     isStarred: {
         type: Boolean,
         default: false
     }
-});
+}, {timestamps: true});
 
 const Note = mongoose.model('Note', noteSchema);
 

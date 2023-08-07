@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const config = require('config');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
-const{User, validate, loginValidation} = require('../Model/users')
+const{User} = require('../Model/users')
+const {validate, loginValidation} = require('../schemas/auth')
 
 
 router.post('/login', async (req,res)=>{
@@ -12,13 +13,20 @@ router.post('/login', async (req,res)=>{
     if (error) return res.status(400).send(error.details[0].message);
 
     let user = await User.findOne({ email: req.body.email });
-    if (!user) return res.status(400).send('Invalid Credentials');
+    if (!user) return res.status(400).json({
+        success: false,
+        message: "Invalid email or password"
+    })
 
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) return res.status(400).send('Invalid email or  password');
 
     const token = user.generateAuthToken();
-    res.send(token);
+    res.status(200).json({
+        success: true,
+        message: 'user logged in successfully',
+        token
+    });
 
 });
 
@@ -27,7 +35,10 @@ router.post('/register', async (req, res)=>{
     if (error) return res.status(400).send(error.details[0].message);
 
     let user = await User.findOne({email : req.body.email});
-    if (user) return res.status(400).send('User already registered');
+    if (user) return res.status(400).json({
+        success: false,
+        message: "User already registered"
+    })
 
     user = new User(_.pick(req.body, ['userName', 'email', 'password', 'confirmPassword']));
 

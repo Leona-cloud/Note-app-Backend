@@ -9,6 +9,6 @@ module.exports = function(){
 mongoose.connect(db, 
     {useNewUrlParser: true, 
         useUnifiedTopology: true})
-        .then(()=> console.log(`connected to ${db}`));
+        .then(()=> console.log(`connected to database`));
   
 }

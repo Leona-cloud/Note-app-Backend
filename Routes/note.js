@@ -31,16 +31,21 @@ router.post("/", [auth, author], async (req, res) => {
   const { error } = validateNote(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  const note = new Note(_.pick(req.body, ["title", "body", "date", "author"]));
+  const note = new Note(_.pick(req.body, ["title", "body", "author"]));
   let Body = req.body.body;
   if(Body.length == 0) return res.status(400).send("Note can't have an empty body");
   
+  try {
     const result = await note.save();
     res.send(result);
     console.log(result);
-
+  } catch (ex) {
     res.send('Please fill the required fields')
     console.log(ex.message);
+  }
+   
+
+    
   
 });
 
