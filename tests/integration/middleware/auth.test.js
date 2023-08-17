@@ -37,6 +37,6 @@ describe("auth middleware", () => {
         token = 'ab'
 
         const res = await exec();
-        expect(res.status).toBe(400)
+        expect(res.status).toBe(401)
     });
 });
